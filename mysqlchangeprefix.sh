@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## version
-VERSION="0.0.1"
+VERSION="1.0.0"
 
 ask () {
   read -p "$1" $2
@@ -14,8 +14,14 @@ ask () {
 loop_through_tables_with_prefix () {
   for i in $(mysql --login-path=$1 $2 -e "SHOW TABLES" | cat | sed 1d | sed -n /^$3/p)
   do
-    echo rename $i with new prefix: $4
+    new_table_name=$(get_name_name $i $3 $4)
+    mysql --login-path=$1 $2 -e "RENAME TABLE $i TO $new_table_name"
+    echo $i renomeada para $new_table_name
   done
+}
+
+get_name_name () {
+  echo $1 | sed s/^$2/$3/g
 }
 
 ## Main function
