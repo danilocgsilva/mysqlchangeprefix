@@ -12,16 +12,24 @@ ask () {
 }
 
 loop_through_tables_with_prefix () {
-  mysql --login-path=$1 $2 -e "SHOW TABLES" | cat | sed 1d | sed -n /^$3/p
+  for i in $(mysql --login-path=$1 $2 -e "SHOW TABLES" | cat | sed 1d | sed -n /^$3/p)
+  do
+    echo rename $i with new prefix: $4
+  done
 }
 
 ## Main function
 mysqlchangeprefix () {
   ask "Please, provides the login-path value: " login_path
   ask "Please, provides the database name: " database_name
-  ask "Please, provides the prefix: " database_prefix
+  ask "Please, provides the old prefix: " database_old_prefix
+  ask "Please, provides the new prefix: " database_new_prefix
 
-  loop_through_tables_with_prefix $login_path $database_name $database_prefix
+  loop_through_tables_with_prefix \
+    $login_path                   \
+    $database_name                \
+    $database_old_prefix          \
+    $database_new_prefix
 }
 
 ## detect if being sourced and
