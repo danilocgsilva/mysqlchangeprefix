@@ -12,7 +12,7 @@ ask () {
 }
 
 loop_through_tables_with_prefix () {
-  mysql --login-path=$1 $2 -e "SHOW TABLES"
+  mysql --login-path=$1 $2 -e "SHOW TABLES" | cat | sed 1d | sed -n /^$3/p
 }
 
 ## Main function
@@ -21,9 +21,7 @@ mysqlchangeprefix () {
   ask "Please, provides the database name: " database_name
   ask "Please, provides the prefix: " database_prefix
 
-  loop_through_tables_with_prefix $login_path $database_name
-
-  echo database_prefix $database_prefix
+  loop_through_tables_with_prefix $login_path $database_name $database_prefix
 }
 
 ## detect if being sourced and
