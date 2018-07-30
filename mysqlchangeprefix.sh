@@ -1,11 +1,24 @@
 #!/bin/bash
 
 ## version
-VERSION="0.0.0"
+VERSION="0.0.1"
+
+ask () {
+  read -p "$1" $2
+  if [[ ${!2} = "" ]]
+  then
+    ask "$1" $2
+  fi
+}
 
 ## Main function
 mysqlchangeprefix () {
-  echo Script goes here...
+  ask "Please, provides the login-path value: " login_path
+  ask "Please, provides the database name: " database_name
+  ask "Please, provides the prefix: " database_prefix
+  echo login_path $login_path
+  echo database_name $database_name
+  echo database_prefix $database_prefix
 }
 
 ## detect if being sourced and
