@@ -11,13 +11,18 @@ ask () {
   fi
 }
 
+loop_through_tables_with_prefix () {
+  mysql --login-path=$1 $2 -e "SHOW TABLES"
+}
+
 ## Main function
 mysqlchangeprefix () {
   ask "Please, provides the login-path value: " login_path
   ask "Please, provides the database name: " database_name
   ask "Please, provides the prefix: " database_prefix
-  echo login_path $login_path
-  echo database_name $database_name
+
+  loop_through_tables_with_prefix $login_path $database_name
+
   echo database_prefix $database_prefix
 }
 
