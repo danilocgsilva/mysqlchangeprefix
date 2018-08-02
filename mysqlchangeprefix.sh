@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## version
-VERSION="1.0.0"
+VERSION="1.1.0"
 
 ask () {
   read -p "$1" $2
@@ -29,12 +29,12 @@ loop_through_tables_with_prefix () {
   username=$5
   password=$6
 
-  loop_tables $loginpath $databasename $username $password $olddatabaseprefix
+  #loop_tables $loginpath $databasename $username $password $olddatabaseprefix
 
   for i in $(loop_tables $loginpath $databasename $username $password $olddatabaseprefix)
   do
     oldtablename=$i
-    new_table_name=$(get_name_name $i $3 $4)
+    new_table_name=$(get_name_name $oldtablename $olddatabaseprefix $newdatabaseprefix)
     rename_table $loginpath $databasename $username $password $oldtablename
     echo $i renamed to $new_table_name
   done
@@ -48,8 +48,6 @@ loop_tables () {
   username=$3
   password=$4
   olddatabaseprefix=$5
-
-  echo login_path = $loginpath
 
   if [[ $loginpath != "-" ]]
   then
