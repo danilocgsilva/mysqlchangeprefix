@@ -29,14 +29,30 @@ loop_through_tables_with_prefix () {
   username=$5
   password=$6
 
-  #loop_tables $loginpath $databasename $username $password $olddatabaseprefix
-
-  for i in $(loop_tables $loginpath $databasename $username $password $olddatabaseprefix)
-  do
+  for i in $(loop_tables $loginpath $databasename $username $password $olddatabaseprefix); do
     oldtablename=$i
     new_table_name=$(get_name_name $oldtablename $olddatabaseprefix $newdatabaseprefix)
+    
     rename_table $loginpath $databasename $username $password $oldtablename
     echo $i renamed to $new_table_name
+  done
+}
+
+loop_through_tables_with_prefix_test () {
+  loginpath=$1
+  databasename=$2
+  olddatabaseprefix=$3
+  newdatabaseprefix=$4
+  username=$5
+  password=$6
+
+  for i in $(loop_tables $loginpath $databasename $username $password $olddatabaseprefix); do
+    oldtablename=$i
+    new_table_name=$(get_name_name $oldtablename $olddatabaseprefix $newdatabaseprefix)
+
+    echo Current table: $oldtablename
+    echo New table: $new_table_name
+    echo '----//----'
   done
 }
 
@@ -91,13 +107,40 @@ mysqlchangeprefix () {
     login_path="-"
   fi
 
-  loop_through_tables_with_prefix \
-    $login_path                   \
-    $database_name                \
-    $database_old_prefix          \
-    $database_new_prefix          \
-    $username                     \
-    $password
+  if is_test $1; then
+    loop_through_tables_with_prefix_test  \
+      $login_path                         \
+      $database_name                      \
+      $database_old_prefix                \
+      $database_new_prefix                \
+      $username                           \
+      $password
+  else
+    loop_through_tables_with_prefix \
+      $login_path                   \
+      $database_name                \
+      $database_old_prefix          \
+      $database_new_prefix          \
+      $username                     \
+      $password
+  fi
+}
+
+is_test () {
+  if [ -z $1 ]; then
+    return 1
+  else
+    valid_test_argument $1
+  fi
+}
+
+valid_test_argument () {
+  if [ $1 = test ]; then
+    return 0
+  else
+    echo Wrong argument given.
+    exit
+  fi
 }
 
 ## detect if being sourced and
